@@ -1,0 +1,89 @@
+{
+  "version": "1.0",
+  "mode": "generate",
+  "intent": {
+    "goal": "Create a believable casual phone photograph of a young woman laughing naturally at a café, not a polished stock image.",
+    "asset_type": "photo",
+    "priority": ["photorealism", "candid energy", "natural skin texture"],
+    "must_preserve": [],
+    "must_avoid": ["studio campaign look", "posed catalog smile"]
+  },
+  "subjects": [
+    {
+      "id": "subject_1",
+      "description": "young adult woman seated at a small café table",
+      "reference_id": null,
+      "appearance": "natural facial asymmetry, visible skin texture, loose hair with a few flyaways",
+      "wardrobe": ["slightly wrinkled cream linen shirt", "simple silver earrings"],
+      "pose_action": "turning toward a friend just off camera while laughing, one hand resting naturally beside a coffee cup",
+      "expression": "mid-laugh, eyes slightly narrowed, unaware of the camera"
+    }
+  ],
+  "composition": {
+    "framing": "waist-up candid photograph",
+    "camera_angle": "eye level from the next table",
+    "perspective": "subtle stranger POV without surveillance tension",
+    "subject_placement": "subject slightly right of center",
+    "foreground": "soft edge of a chair and cup partially entering frame",
+    "background": "busy neighborhood café with imperfectly aligned chairs and window reflections",
+    "depth_layers": ["soft foreground obstruction", "sharp subject", "blurred café patrons"]
+  },
+  "camera": {
+    "capture_style": "handheld smartphone photo",
+    "device": "recent flagship smartphone main camera",
+    "lens": "natural wide camera",
+    "focal_length_mm": 26,
+    "aperture": "computational wide aperture look",
+    "focus": "face in focus, not tack-sharp everywhere",
+    "depth_of_field": "moderate natural phone-camera separation",
+    "motion": "tiny motion softness in hair and gesturing hand"
+  },
+  "lighting": {
+    "sources": ["overcast daylight through front window", "warm practical pendant lights"],
+    "direction": "soft side light from camera-left",
+    "quality": "mixed, imperfect natural light",
+    "exposure": "slight highlight lift on the window side of the face",
+    "color_temperature": "mixed cool daylight and warm interior practicals"
+  },
+  "environment": {
+    "location": "small urban neighborhood café",
+    "time": "late afternoon",
+    "weather": "overcast outside",
+    "details": ["used napkin near another table", "subtle fingerprints on window glass", "uneven chair spacing"]
+  },
+  "look": {
+    "medium": "photograph",
+    "style": "casual social-media phone photo",
+    "color": "restrained natural colors",
+    "texture": "real skin, fabric weave, glass reflections",
+    "post_processing": "very light phone processing, no beauty filter, no HDR punch"
+  },
+  "realism": {
+    "anchors": ["visible pores", "linen fabric weave", "physically consistent window reflections"],
+    "imperfections": ["slight hand motion softness", "minor window smudges", "small flyaway hairs"],
+    "anatomy_checks": ["natural five-finger hand resting beside cup", "believable shoulder and wrist proportions"]
+  },
+  "text_rendering": {
+    "enabled": false,
+    "exact_text": [],
+    "placement": [],
+    "typography": ""
+  },
+  "references": [],
+  "negative_constraints": ["plastic skin", "beauty-filter smoothing", "extra fingers", "warped cup", "stock photo aesthetic", "watermark"],
+  "output": {
+    "aspect_ratio": "4:5",
+    "resolution": "high",
+    "count": 1,
+    "background": "opaque",
+    "format": "png"
+  },
+  "dispatch": {
+    "preferred_adapter": "native",
+    "provider": "auto",
+    "model": "auto",
+    "quality": "high",
+    "auto_generate": true,
+    "auto_retry": false
+  }
+}
