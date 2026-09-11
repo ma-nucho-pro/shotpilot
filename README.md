@@ -1,4 +1,8 @@
 <p align="center">
+  <img src="https://i.ibb.co/vC1FphVh/Chat-GPT-Image-11-sept-2026-06-30-35-p-m.png" alt="ShotPilot logo" width="640" />
+</p>
+
+<p align="center">
   <strong style="font-size: 28px;">SHOTPILOT</strong>
 </p>
 
