@@ -1,256 +1,339 @@
 <p align="center">
-  <img src="https://i.ibb.co/vC1FphVh/Chat-GPT-Image-11-sept-2026-06-30-35-p-m.png" alt="ShotPilot logo" width="280" />
+  <img src="https://i.ibb.co/vC1FphVh/Chat-GPT-Image-11-sept-2026-06-30-35-p-m.png" alt="ShotPilot logo" width="240" />
+</p>
+
+<h1 align="center">ShotPilot</h1>
+
+<p align="center">
+  <strong>prompt in. image out.</strong><br />
+  An agent-native image generation skill that turns rough image requests into structured, validated visual specifications and routes them to an available image-generation capability.
 </p>
 
 <p align="center">
-  <strong style="font-size: 38px;">ShotPilot</strong><br/>
-  <span style="font-size: 20px; color: #8b949e;">prompt in. image out.</span>
-</p>
-
-<p align="center">
-  AI image generation Agent Skill for Codex, Claude Code, Cursor and Gemini CLI.
-</p>
-
-<table>
-  <tr>
-    <td width="50%" valign="top">
-      <h2>Before</h2>
-      <p>Long, messy prompts. Lots of back and forth.</p>
-      <pre><code>Create a cinematic, professional, photorealistic
-image of a modern workspace with a laptop on a
-wooden desk, a coffee cup, a notebook, plants,
-soft natural light coming from a window, shallow
-depth of field, bokeh, warm tones, 8k, ultra
-detailed, realistic lighting, film look, shot on
-DSLR, 50mm, f/1.8, --ar 16:9 --style raw --v 6
-
-Also make it look inspiring and minimal but cozy,
-with no people, and add subtle brand vibes for an
-AI productivity tool...</code></pre>
-    </td>
-    <td width="50%" valign="top">
-      <h2>After</h2>
-      <p>Simple, structured, great results.</p>
-      <p><strong>🔵 1. Describe what you want</strong></p>
-      <pre><code>shotpilot generate "modern workspace, laptop,
-coffee, plants, cinematic, 16:9"</code></pre>
-      <p><strong>🔵 2. Run the command</strong></p>
-      <pre><code>shotpilot run</code></pre>
-      <p><strong>🔵 3. Get your image</strong><br/>
-      High-quality, production-ready image. No prompt engineering skills needed.</p>
-    </td>
-  </tr>
-</table>
-
-<p align="center">
-  <a href="https://github.com/ma-nucho-pro/shotpilot/actions/workflows/ci.yml"><img src="https://github.com/ma-nucho-pro/shotpilot/actions/workflows/ci.yml/badge.svg" alt="tests" /></a>
-  <img src="https://img.shields.io/badge/license-MIT-8fbf6a?style=for-the-badge" alt="license MIT" />
+  <a href="https://github.com/ma-nucho-pro/shotpilot/actions/workflows/ci.yml"><img src="https://github.com/ma-nucho-pro/shotpilot/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-8fbf6a?style=for-the-badge" alt="MIT license" /></a>
+  <img src="https://img.shields.io/badge/node-%E2%89%A518.17-0098FF?style=for-the-badge" alt="Node.js 18.17 or newer" />
   <img src="https://img.shields.io/badge/runtime_dependencies-0-2ea043?style=for-the-badge" alt="zero runtime dependencies" />
-  <img src="https://img.shields.io/badge/agent--native-yes-6f42c1?style=for-the-badge" alt="agent native" />
-  <img src="https://img.shields.io/badge/JSON-validated-444444?style=for-the-badge" alt="validated JSON" />
-  <img src="https://img.shields.io/badge/node-%E2%89%A518.17-0098FF?style=for-the-badge" alt="node 18.17+" />
+  <img src="https://img.shields.io/badge/Agent_Skills-SKILL.md-6f42c1?style=for-the-badge" alt="Agent Skills format" />
 </p>
 
 <p align="center">
-  <a href="#why">Why</a> •
-  <a href="#what-it-does">What it does</a> •
-  <a href="#how-it-works">How it works</a> •
-  <a href="#install">Install</a> •
-  <a href="#autonomous-dispatch">Dispatch</a> •
-  <a href="#json-contract">JSON</a> •
-  <a href="#author">Author</a>
+  <a href="#why-shotpilot">Why</a> ·
+  <a href="#what-it-does">What it does</a> ·
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#install-the-skill">Install</a> ·
+  <a href="#harness-support">Harnesses</a> ·
+  <a href="#image-backends">Backends</a> ·
+  <a href="#examples">Examples</a> ·
+  <a href="#faq">FAQ</a>
 </p>
 
----
+~~~text
+rough request → ShotPilot → validated visual contract → available generator → image
+~~~
 
-```text
-You:  make this look like a real iPhone photo, same person, same clothes,
-      late-night convenience store, 4:5, keep the face unchanged
+ShotPilot is the orchestration layer. The host agent or a configured webhook must provide the capability that renders the pixels.
 
-ShotPilot (internal)
-  classify      edit + identity reference
-  compile       canonical image JSON
-  enrich        camera · lighting · spatial detail · realistic imperfections
-  validate      96/100 ✓
-  verify        hard constraints preserved ✓
-  dispatch      native image tool → generated image
+## Why ShotPilot
 
-You receive: the image.
-You did not copy a JSON blob into another model.
-```
+Most prompt workflows turn:
 
-## Why
+~~~text
+short request → longer prompt → copy/paste → tweak → repeat
+~~~
 
-Most "image prompt" workflows stop at the least useful point: they hand you a longer prompt.
+ShotPilot treats the problem as visual-intent compilation instead. It preserves what the user actually asked for, adds camera or lighting detail only when useful, validates the result, and routes the request without making the user move JSON or prompts between tools.
 
-Then you copy it, switch tools, paste it into another model, discover that the framing changed, rewrite it, and repeat.
-
-ShotPilot treats prompting as a **compiler + dispatch problem** instead:
-
-```text
-rough intent
-    ↓
-canonical visual spec (JSON)
-    ↓
-validation + semantic fidelity check
-    ↓
-model/tool adapter
-    ↓
-image generator
-    ↓
-observable QA
-```
-
-The JSON exists because visual intent needs structure. You normally never have to see it.
+| Without ShotPilot | With ShotPilot |
+| --- | --- |
+| “Cinematic, professional, realistic, 8K, DSLR…” | “Create a believable late-night iPhone photo. Keep this person. 4:5.” |
+| Manual prompt engineering and repeated edits | Intent classification and a canonical visual contract |
+| Copy/paste between the agent and an image model | One validated request handed to the available generation capability |
 
 ## What it does
 
-### It turns vague prompts into a visual contract
+ShotPilot is not simply <code>short prompt → longer prompt</code>. Its skill defines a pipeline for an agent:
 
-ShotPilot captures the parts image models commonly lose:
+1. Understand the user’s visual intent and hard constraints.
+2. Classify reference images by role.
+3. Build one canonical JSON specification.
+4. Add medium-appropriate camera, lighting, composition, and realism detail only when it helps.
+5. Run deterministic validation and require a score of at least 90/100 before dispatch.
+6. Route the validated contract to a host-native image tool or a configured JSON webhook.
+7. If no generator is available, return the validated spec and rendered prompt instead of claiming that an image was created.
 
-- what the image is actually for;
-- subject count and identity/reference roles;
-- pose/action and spatial relationships;
-- framing, angle, perspective and depth layers;
-- physical lighting sources;
-- camera/capture language when the medium is photographic;
-- exact visible text;
-- what must remain unchanged during edits;
-- negative constraints tied to likely failure modes;
-- aspect ratio, count, format and dispatch behavior.
+### Reference images are not interchangeable
 
-### It validates before it generates
+The schema gives each reference an explicit role:
 
-A deterministic validator checks the canonical spec. The default quality gate is **90/100**.
+| Role | Meaning |
+| --- | --- |
+| <code>identity</code> | Preserve a person’s recognizable identity when requested. |
+| <code>composition</code> | Preserve framing, placement, or camera relationships. |
+| <code>style</code> | Borrow visual treatment without changing identity or structure. |
+| <code>product</code> | Preserve a product’s shape, materials, branding, and physical details. |
+| <code>environment</code> | Preserve a place or background context. |
+| <code>edit_target</code> | Identify the image being changed in an edit or inpaint operation. |
 
-```bash
-shotpilot validate examples/candid-cafe.json
-```
+For edits, unchanged requirements belong in <code>intent.must_preserve</code>; prohibited outcomes belong in <code>intent.must_avoid</code> or the top-level <code>negative_constraints</code>. The skill does not claim pixel-perfect identity preservation when the selected generator cannot guarantee it.
 
-```text
+## Quick start
+
+The repository’s executable surface is intentionally small and dependency-free:
+
+~~~bash
+git clone https://github.com/ma-nucho-pro/shotpilot.git
+cd shotpilot
+
+npm test
+
+node bin/shotpilot.mjs validate examples/candid-cafe.json
+node bin/shotpilot.mjs render examples/candid-cafe.json
+~~~
+
+The example currently validates as:
+
+~~~text
 VALID
 score: 100/100
-```
+~~~
 
-The score does not pretend to judge art. It checks whether the agent actually specified enough to make the generation controllable. The agent separately checks semantic fidelity against your original request.
+To make the CLI available as <code>shotpilot</code> on your machine, optionally run:
 
-### It does not force "cinematic" on everything
+~~~bash
+npm link
+shotpilot validate examples/candid-cafe.json
+~~~
 
-A casual iPhone photo should stay casual. A product render should not inherit fake film grain. A clean UI should not get lens flare.
+<code>npm link</code> installs a local command link; it does not install an image provider.
 
-ShotPilot chooses perspective, imperfections, camera language and post-processing only when they serve the requested medium.
+## Install the skill
 
-### It understands references by role
+The distributable Agent Skill is the directory:
 
-A reference can mean very different things:
-
-| Role | What ShotPilot preserves |
-|---|---|
-| identity | the person's recognizable identity requested by the user |
-| composition | framing, placement and camera relationship |
-| style | visual treatment, not identity |
-| product | shape, materials, branding and physical details |
-| environment | place/background characteristics |
-| edit target | the image being surgically changed |
-
-That separation prevents the classic failure where a style reference accidentally changes the person or product.
-
-### It keeps exact text exact
-
-For posters, UI, memes, labels and ads, visible copy is stored separately in `text_rendering.exact_text`. The agent is told to preserve it character-for-character rather than paraphrase it into the visual description.
-
-## How it works
-
-The distributable skill lives in `skills/shotpilot/`.
-
-```text
+~~~text
 skills/shotpilot/
-  SKILL.md
-  references/
-    spec-schema.md        canonical image JSON contract
-    realism.md            anti-AI / photographic realism guidance
-    perspectives.md       camera perspective selection
-    routing.md            capability-based generator routing
-    quality-rubric.md     semantic + structural quality bar
-  scripts/
-    validate-spec.mjs     deterministic 0–100 validator
-    render-prompt.mjs     JSON → provider-friendly prompt
-    dispatch-webhook.mjs  JSON → your image automation endpoint
-```
+├── SKILL.md
+├── references/
+└── scripts/
+~~~
 
-The agent performs eight stages:
+Register or copy that directory into the skill location supported by your agent. The discovered file must remain at:
 
-```text
-1. classify
-2. compile JSON
-3. choose perspective when useful
-4. add medium-appropriate realism/style detail
-5. validate ≥ 90
-6. optionally verify with a real subagent on complex work
-7. dispatch automatically
-8. inspect observable defects and make at most one allowed correction
-```
+~~~text
+<agent-skill-root>/shotpilot/SKILL.md
+~~~
 
-## Autonomous dispatch
+Keep <code>references/</code> and <code>scripts/</code> beside <code>SKILL.md</code>; the skill loads them progressively when needed.
 
-ShotPilot tries routes in this order.
+This repository does not ship <code>scripts/install.mjs</code>, a <code>.skill</code> archive, <code>GEMINI.md</code>, <code>gemini-extension.json</code>, or <code>agents/openai.yaml</code>. There is therefore no bundled one-command installer, provider credential setup, or harness-specific extension metadata. The source folder above is the portable installation unit.
 
-### 1. Native image tool
+### Install with Claude Code
 
-If the host already exposes an image generation/editing tool, ShotPilot uses it directly. This is the preferred path because attached references stay inside the agent workflow.
+Use Claude Code’s Agent Skills discovery mechanism and register <code>skills/shotpilot/</code>. Anthropic’s [Agent Skills overview](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) explains the portable directory format. If your Claude Code version uses a project skill directory, the final layout should be:
 
-If the tool accepts JSON, the canonical object is passed as structured input. If it expects text, ShotPilot renders the same validated JSON into a provider-friendly prompt first.
+~~~text
+.claude/skills/shotpilot/SKILL.md
+~~~
 
-### 2. Your webhook
+Copy-ready instruction:
 
-No native image tool? Point ShotPilot at an n8n, Make, MCP gateway, serverless function, or your own image service:
+~~~text
+Install ShotPilot from https://github.com/ma-nucho-pro/shotpilot.
+Inspect the repository first. Register the directory skills/shotpilot/ as an Agent Skill,
+keeping SKILL.md at the skill root and preserving its references/ and scripts/ folders.
+Do not overwrite unrelated skills, add provider credentials, or configure a webhook.
+Run npm test from the repository root and report the installed path and whether Claude
+Code has an image-generation tool available.
+~~~
 
-```bash
+### Install with Codex
+
+Codex can discover a skill directory containing <code>SKILL.md</code>. Use the [Codex skills documentation](https://developers.openai.com/codex/skills/) and the Codex skill installer when available, or place <code>skills/shotpilot/</code> in a Codex skill root. User-scoped installs commonly use <code>~/.agents/skills/shotpilot/</code>; older Codex releases may also use <code>~/.codex/skills/shotpilot/</code>. This repository intentionally has no Codex-specific <code>agents/openai.yaml</code>; the portable skill instructions remain in <code>SKILL.md</code>.
+
+Copy-ready instruction:
+
+~~~text
+Install the ShotPilot skill from
+https://github.com/ma-nucho-pro/shotpilot/tree/main/skills/shotpilot.
+Inspect the skill before installing it. Keep the directory layout intact, do not
+overwrite unrelated skills, do not add credentials, and run npm test in the cloned
+repository. Confirm the final Codex skill path and whether a native image-generation
+tool is available for dispatch.
+~~~
+
+### Install with Cursor
+
+Cursor discovers Agent Skills from project or user skill directories. See the [Cursor Skills documentation](https://cursor.com/docs/skills) for current discovery locations. A project-scoped layout is:
+
+~~~text
+.cursor/skills/shotpilot/SKILL.md
+~~~
+
+For a user-scoped installation, use <code>~/.cursor/skills/shotpilot/</code> or <code>~/.agents/skills/shotpilot/</code>. After copying the folder, reload or list skills in Cursor and invoke ShotPilot when an image task matches its description.
+
+Copy-ready instruction:
+
+~~~text
+Install ShotPilot from https://github.com/ma-nucho-pro/shotpilot.
+Copy skills/shotpilot/ to .cursor/skills/shotpilot/ for this project, preserve
+SKILL.md, references/, and scripts/, then reload the skills list. Do not alter
+unrelated rules or settings. Run npm test and report whether Cursor exposes an
+image-generation capability for the final dispatch step.
+~~~
+
+### Install with Gemini CLI
+
+Gemini CLI supports Agent Skills and can install a skill from a repository URL. See the [Gemini CLI Agent Skills documentation](https://geminicli.com/docs/cli/using-agent-skills/) for current commands:
+
+~~~bash
+gemini skills install https://github.com/ma-nucho-pro/shotpilot/tree/main/skills/shotpilot
+~~~
+
+For a workspace-local installation, the discovered layout can be:
+
+~~~text
+.gemini/skills/shotpilot/SKILL.md
+~~~
+
+For a user-scoped installation, use <code>~/.gemini/skills/shotpilot/</code> or the <code>~/.agents/skills/shotpilot/</code> alias.
+
+Verify discovery in an interactive session with <code>/skills list</code>. Reload with <code>/skills reload</code> when supported by the installed Gemini CLI version.
+
+Copy-ready instruction:
+
+~~~text
+Install ShotPilot from
+https://github.com/ma-nucho-pro/shotpilot/tree/main/skills/shotpilot.
+Preserve the complete skill directory, inspect its scripts before activation,
+run npm test in the repository root, and confirm the result with /skills list.
+Do not add credentials or claim that an image was generated unless Gemini CLI
+has an image-generation tool or a configured ShotPilot webhook.
+~~~
+
+### Install in another Agent Skills harness
+
+Use the same folder as the package. A compatible harness should discover the YAML frontmatter in <code>SKILL.md</code>, then load <code>references/</code> and <code>scripts/</code> relative to it:
+
+~~~text
+<skills-root>/shotpilot/SKILL.md
+<skills-root>/shotpilot/references/
+<skills-root>/shotpilot/scripts/
+~~~
+
+If the harness uses a different discovery directory, follow that harness’s documented location. Do not move <code>SKILL.md</code> away from the skill root.
+
+## Harness support
+
+ShotPilot is distributed as a portable Agent Skill. “Supported” here means that the harness can discover and execute a <code>SKILL.md</code> directory; image generation still depends on the tools and permissions exposed by that harness.
+
+| Harness | Repository integration | What to verify |
+| --- | --- | --- |
+| Claude Code | Portable <code>skills/shotpilot/SKILL.md</code>; no Claude-specific manifest is shipped. | The skill is discovered and the host exposes a generator or webhook. |
+| Codex | Portable <code>SKILL.md</code>; no <code>agents/openai.yaml</code> is shipped. | The skill is in a discovered Codex skill root and native image tools are available if automatic generation is expected. |
+| Cursor | Portable <code>SKILL.md</code>; project install can use <code>.cursor/skills/shotpilot/</code>. | Reload/list skills after installation. |
+| Gemini CLI | Portable <code>SKILL.md</code>; workspace install can use <code>.gemini/skills/shotpilot/</code>. | <code>/skills list</code> shows <code>shotpilot</code> before activation. |
+| Other Agent Skills harnesses | Standard folder with <code>SKILL.md</code>, <code>references/</code>, and <code>scripts/</code>. | Confirm the harness’s discovery path and tool permissions. |
+
+## Image backends
+
+ShotPilot and an image model are two different layers:
+
+- **ShotPilot** understands and validates the visual request.
+- **The image backend** renders the pixels.
+
+The skill’s routing policy is capability-based:
+
+1. **Host-native image-generation tool** — preferred when the current agent exposes one, especially for reference-image edits.
+2. **Configured JSON webhook** — the executable <code>send</code> command posts the unchanged canonical JSON to <code>SHOTPILOT_WEBHOOK_URL</code>. The endpoint can be a custom service, an n8n or Make workflow, or an MCP gateway you operate.
+3. **No generator** — validation and prompt rendering still work, but ShotPilot does not report a generated image.
+
+There is no provider SDK, image model, or MCP server bundled in this repository. GPT Image, Nano Banana, Flux, Midjourney, or another provider can be used only when the host exposes it or the webhook routes to it. Provider availability, authentication, cost, and reference support remain external to ShotPilot.
+
+### Connect a webhook
+
+macOS/Linux:
+
+~~~bash
 export SHOTPILOT_WEBHOOK_URL="https://your-endpoint.example/generate"
 export SHOTPILOT_WEBHOOK_TOKEN="optional-bearer-token"
-
 shotpilot send examples/candid-cafe.json
-```
+~~~
 
-The webhook receives the canonical JSON as `application/json` unchanged.
+PowerShell:
 
-This is the portable bridge that lets you connect **any** image model without changing the skill.
+~~~powershell
+$env:SHOTPILOT_WEBHOOK_URL = "https://your-endpoint.example/generate"
+$env:SHOTPILOT_WEBHOOK_TOKEN = "optional-bearer-token"
+shotpilot send examples/candid-cafe.json
+~~~
 
-### 3. No generator connected
+The webhook receives <code>application/json</code> with the canonical spec unchanged. If <code>SHOTPILOT_WEBHOOK_URL</code> is not set, <code>send</code> exits with an error instead of making a request.
 
-ShotPilot fails honestly. It leaves you with a validated JSON spec + rendered prompt instead of claiming an image was generated.
+## Examples
 
-## JSON contract
+The checked-in example is a complete photographic generation spec:
 
-A shortened example:
+~~~text
+examples/candid-cafe.json
+~~~
 
-```json
+Validate and render it with:
+
+~~~bash
+shotpilot validate examples/candid-cafe.json
+shotpilot render examples/candid-cafe.json
+~~~
+
+The schema also supports <code>generate</code>, <code>edit</code>, <code>inpaint</code>, and <code>multi_reference</code> modes. Edit-like modes require references and should put unchanged requirements in <code>intent.must_preserve</code>.
+
+## Architecture and JSON
+
+The agent-facing flow is:
+
+~~~text
+User request
+    ↓
+ShotPilot skill
+    ├─ understand intent and hard constraints
+    ├─ classify reference roles
+    ├─ build canonical JSON
+    ├─ add useful camera / lighting / composition detail
+    ├─ validate ≥ 90/100
+    ├─ route to an available capability
+    └─ return the generated result, or an honest fallback
+         ↓
+      Image backend
+         ↓
+       Image
+~~~
+
+The canonical object is an internal contract. The normal agent workflow does not ask the user to copy it. The CLI exposes it because <code>validate</code>, <code>render</code>, and <code>send</code> are deterministic developer utilities.
+
+The contract includes:
+
+~~~text
+intent → subjects → composition → camera → lighting → environment
+       → look → realism → text_rendering → references
+       → negative_constraints → output → dispatch
+~~~
+
+See the complete schema in [skills/shotpilot/references/spec-schema.md](skills/shotpilot/references/spec-schema.md).
+
+Short excerpt:
+
+~~~json
 {
   "version": "1.0",
   "mode": "generate",
   "intent": {
-    "goal": "Believable casual phone photo, not a stock image",
+    "goal": "What the finished image must accomplish",
     "asset_type": "photo",
     "must_preserve": [],
-    "must_avoid": ["studio campaign look"]
+    "must_avoid": []
   },
-  "subjects": [
-    {
-      "id": "subject_1",
-      "description": "young woman at a café",
-      "pose_action": "mid-laugh turning to a friend"
-    }
-  ],
-  "composition": {
-    "framing": "waist-up",
-    "camera_angle": "eye level",
-    "perspective": "subtle stranger POV"
-  },
-  "lighting": {
-    "sources": ["overcast window daylight", "warm pendant lights"]
-  },
-  "negative_constraints": ["plastic skin", "extra fingers", "watermark"],
+  "references": [],
+  "negative_constraints": ["watermark", "malformed hands"],
   "output": {
     "aspect_ratio": "4:5",
     "count": 1,
@@ -261,107 +344,81 @@ A shortened example:
     "auto_generate": true
   }
 }
-```
+~~~
 
-The complete schema is in [`skills/shotpilot/references/spec-schema.md`](skills/shotpilot/references/spec-schema.md).
-
-## Install
-
-### Option 1 — install the `.skill`
-
-Use the packaged `shotpilot.skill` release file in any Agent Skills-compatible host that supports `.skill` imports.
-
-### Option 2 — let your agent install the folder
-
-Give Claude Code, Codex, Cursor or another skill-capable agent this repo and ask it to install:
-
-```text
-Install the ShotPilot skill from this repository.
-Use skills/shotpilot as the skill source.
-Copy it into the skill directory used by this agent without overwriting unrelated skills.
-Run the bundled validator against examples/candid-cafe.json and show me the result.
-Do not add credentials or configure a webhook unless I explicitly ask.
-```
-
-### Option 3 — use only the CLI utilities
-
-```bash
-git clone https://github.com/ma-nucho-pro/shotpilot.git
-cd shotpilot
-npm link
-shotpilot validate examples/candid-cafe.json
-shotpilot render examples/candid-cafe.json
-```
-
-Requires Node 18.17+. There are **zero runtime npm dependencies**.
+Validation is structural, not an artistic score. The included validator returns <code>VALID</code> only when there are no structural errors and the score is at least 90/100; the skill separately requires semantic fidelity to the user’s request.
 
 ## Commands
 
-| Command | What it does |
-|---|---|
-| `shotpilot validate spec.json` | validate + score canonical JSON |
-| `shotpilot render spec.json` | convert canonical JSON into a provider-friendly text prompt |
-| `shotpilot send spec.json` | POST canonical JSON to `SHOTPILOT_WEBHOOK_URL` |
-| `npm test` | run the local deterministic checks |
+| Command | Behavior |
+| --- | --- |
+| <code>shotpilot validate spec.json</code> | Parse and score a canonical JSON spec. |
+| <code>shotpilot render spec.json</code> | Flatten the canonical spec into a provider-friendly text prompt. |
+| <code>shotpilot send spec.json</code> | POST the canonical JSON to <code>SHOTPILOT_WEBHOOK_URL</code>. |
+| <code>npm test</code> | Run the deterministic validator/renderer checks. |
+| <code>npm run check</code> | Run the same check script through the <code>check</code> npm alias. |
+| <code>node bin/shotpilot.mjs</code> | Print CLI usage. |
 
-The CLI does not contain a second LLM. **The agent is the prompt compiler.** The CLI exists for deterministic validation and transport.
-
-## Safety and secrets
-
-ShotPilot does not require an account, database, daemon or telemetry service.
-
-- The skill itself makes no network call unless dispatch reaches the configured webhook.
-- `SHOTPILOT_WEBHOOK_TOKEN` is read only from the process environment and is never written by the tool.
-- `.env` files are git-ignored.
-- Do not commit API keys or webhook tokens.
-- Paid-provider retries are off by default. Set `SHOTPILOT_AUTO_RETRY=1` only if you intentionally want automatic retries and your adapter honors it.
-
-## Design principles
-
-**Fidelity before decoration.** A prettier wrong image is still wrong.
-
-**Structure before prose.** The JSON is the source of truth; the flattened prompt is an adapter output.
-
-**Physical detail over hype words.** Light direction, fabric weave and actual camera position beat "masterpiece ultra quality".
-
-**Progressive disclosure.** The main skill stays lean; model/medium-specific guidance lives in references and is loaded only when relevant.
-
-**No copy/paste tax.** If the agent can generate, it generates.
+The CLI does not contain a second LLM. The agent is responsible for compiling the request; the CLI provides deterministic validation, rendering, and transport.
 
 ## Repository layout
 
-```text
+~~~text
 shotpilot/
-  README.md
-  LICENSE
-  package.json
-  AGENTS.md
-  CLAUDE.md
-  bin/shotpilot.mjs
-  examples/
-  tests/
-  skills/shotpilot/
-  .github/workflows/ci.yml
-```
+├── bin/shotpilot.mjs                       CLI entry point
+├── examples/candid-cafe.json               complete example spec
+├── skills/shotpilot/
+│   ├── SKILL.md                            core agent instructions
+│   ├── references/                         schema and guidance
+│   └── scripts/
+│       ├── validate-spec.mjs               deterministic 0–100 validator
+│       ├── render-prompt.mjs               JSON → text prompt renderer
+│       └── dispatch-webhook.mjs            JSON → webhook transport
+├── tests/run.mjs                           local checks
+├── .github/workflows/ci.yml                Node 18, 20, and 22 on three OSes
+├── package.json                            CLI metadata and npm scripts
+└── LICENSE                                 MIT license
+~~~
 
-## Verify it yourself
+The repository contains no provider credentials, database, daemon, telemetry service, native image backend, or MCP server. The webhook token is read only from the process environment.
 
-```bash
-npm test
-```
+## FAQ
 
-The included checks prove that:
+### Does ShotPilot generate images by itself?
 
-- the example spec passes the quality gate;
-- the validator rejects incomplete specs;
-- the renderer keeps the objective and negative constraints;
-- the project runs with Node's built-in modules only.
+No. The skill orchestrates the request and dispatches it to a capability exposed by the host or to a configured webhook. Without either one, it stops at a validated spec and rendered prompt.
 
-CI runs the suite on Linux, macOS and Windows across Node 18, 20 and 22.
+### Do I need to copy the JSON into another AI?
+
+No in the normal Agent Skill workflow. The JSON is the internal contract passed to the available tool or adapter. The CLI commands intentionally accept a JSON file because they are developer-facing deterministic utilities.
+
+### Is this a prompt enhancer?
+
+Not primarily. Its core job is to preserve intent in a structured visual contract, validate it, adapt it to the available capability, and avoid a manual copy/paste loop.
+
+### Does it include GPT Image, Nano Banana, Flux, or Midjourney adapters?
+
+No provider adapter is included. Those backends can be connected through a host-native tool or a webhook that you control. ShotPilot does not claim a generation succeeded unless a connected capability actually returns a result.
+
+### Is MCP built in?
+
+No MCP server is bundled. An MCP image tool can be exposed by the host, or an MCP gateway can sit behind the configured webhook. The repository itself only implements the JSON webhook transport.
+
+### What does the 90/100 threshold mean?
+
+It is the implemented structural quality gate in <code>validate-spec.mjs</code>, not a judgment of artistic quality. Semantic failures still override the numeric score.
+
+### Can I use it for edits and reference images?
+
+Yes, the schema supports <code>edit</code>, <code>inpaint</code>, and <code>multi_reference</code>. Supply references with explicit roles and put unchanged requirements in <code>intent.must_preserve</code>. The actual generator must support the required reference or editing operation.
+
+### What versions and dependencies are required?
+
+Node.js 18.17 or newer. The package has no runtime npm dependencies and uses Node’s built-in modules. No image provider account is required for local validation or rendering.
 
 ## Author
 
-**Roberto Manuel Jara Peche** — builder focused on AI systems, agents and practical generative-AI workflows. Creator of projects such as **Wife**, and the person behind **@ManuchoAI**.
+**Roberto Manuel Jara Peche** — builder focused on AI systems, agents, and practical generative-AI workflows. Creator of projects such as **Wife**, and the person behind **@ManuchoAI**.
 
 <p>
   <a href="https://github.com/ma-nucho-pro"><img src="https://img.shields.io/badge/GitHub-ma--nucho--pro-181717?style=for-the-badge&logo=github" alt="GitHub" /></a>
@@ -370,8 +427,6 @@ CI runs the suite on Linux, macOS and Windows across Node 18, 20 and 22.
   <a href="https://www.instagram.com/robertmanuchojp/"><img src="https://img.shields.io/badge/Instagram-robertmanuchojp-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram" /></a>
   <a href="https://www.linkedin.com/in/roberto-manuel-jara-peche-10867240b/"><img src="https://img.shields.io/badge/LinkedIn-Roberto%20Manuel%20Jara%20Peche-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
 </p>
-
-If ShotPilot improves your generations, a ⭐ helps other builders find it.
 
 ## License
 
