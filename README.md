@@ -1,21 +1,46 @@
 <p align="center">
-  <img src="https://i.ibb.co/vC1FphVh/Chat-GPT-Image-11-sept-2026-06-30-35-p-m.png" alt="ShotPilot logo" width="640" />
+  <img src="https://i.ibb.co/vC1FphVh/Chat-GPT-Image-11-sept-2026-06-30-35-p-m.png" alt="ShotPilot logo" width="280" />
 </p>
 
 <p align="center">
-  <strong style="font-size: 28px;">SHOTPILOT</strong>
-</p>
-
-<h1 align="center">ShotPilot</h1>
-
-<p align="center">
-  <strong>prompt in. image out.</strong>
+  <strong style="font-size: 38px;">ShotPilot</strong><br/>
+  <span style="font-size: 20px; color: #8b949e;">prompt in. image out.</span>
 </p>
 
 <p align="center">
-  An agent-native image director that turns rough requests into validated visual specs<br/>
-  and sends them straight to the image generator — no JSON copy/paste loop.
+  AI image generation Agent Skill for Codex, Claude Code, Cursor and Gemini CLI.
 </p>
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h2>Before</h2>
+      <p>Long, messy prompts. Lots of back and forth.</p>
+      <pre><code>Create a cinematic, professional, photorealistic
+image of a modern workspace with a laptop on a
+wooden desk, a coffee cup, a notebook, plants,
+soft natural light coming from a window, shallow
+depth of field, bokeh, warm tones, 8k, ultra
+detailed, realistic lighting, film look, shot on
+DSLR, 50mm, f/1.8, --ar 16:9 --style raw --v 6
+
+Also make it look inspiring and minimal but cozy,
+with no people, and add subtle brand vibes for an
+AI productivity tool...</code></pre>
+    </td>
+    <td width="50%" valign="top">
+      <h2>After</h2>
+      <p>Simple, structured, great results.</p>
+      <p><strong>🔵 1. Describe what you want</strong></p>
+      <pre><code>shotpilot generate "modern workspace, laptop,
+coffee, plants, cinematic, 16:9"</code></pre>
+      <p><strong>🔵 2. Run the command</strong></p>
+      <pre><code>shotpilot run</code></pre>
+      <p><strong>🔵 3. Get your image</strong><br/>
+      High-quality, production-ready image. No prompt engineering skills needed.</p>
+    </td>
+  </tr>
+</table>
 
 <p align="center">
   <a href="https://github.com/ma-nucho-pro/shotpilot/actions/workflows/ci.yml"><img src="https://github.com/ma-nucho-pro/shotpilot/actions/workflows/ci.yml/badge.svg" alt="tests" /></a>
