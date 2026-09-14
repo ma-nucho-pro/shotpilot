@@ -1,0 +1,8 @@
+interface:
+  display_name: "ShotPilot"
+  short_description: "Orchestrate structured AI image generation"
+  brand_color: "#0B73FF"
+  default_prompt: "Use $shotpilot to turn this image request into a validated visual spec and dispatch it to the available image tool."
+
+policy:
+  allow_implicit_invocation: true

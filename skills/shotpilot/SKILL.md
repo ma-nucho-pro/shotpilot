@@ -1,6 +1,6 @@
 ---
 name: shotpilot
-description: "Autonomous image-generation director. Use whenever the user asks to create, generate, render, edit, transform, restyle, translate, repair, or improve an AI image or image prompt. Converts the user's request into a precise canonical JSON image spec, validates it, adapts it to the available image-generation tool/provider, and dispatches generation automatically so the user does not need to copy JSON or prompts. Handles references, identity preservation, products, people, photorealism, illustrations, posters, UI, text-in-image, aspect ratios, camera perspective, and negative constraints."
+description: "Autonomous image-generation director for hosts with an image capability. Use whenever the user asks to create, generate, render, edit, transform, restyle, translate, repair, or improve an AI image or image prompt. Converts the user's request into a precise canonical JSON image spec, validates it, adapts it to the available host tool or webhook, and dispatches generation automatically so the user does not need to copy JSON or prompts. Handles references, identity preservation, products, people, photorealism, illustrations, posters, UI, text-in-image, aspect ratios, camera perspective, and negative constraints."
 license: MIT
 metadata:
   author: Roberto Manuel Jara Peche
@@ -9,7 +9,7 @@ metadata:
 
 # ShotPilot
 
-Turn rough image intent into a validated production spec and send it to the image generator automatically.
+Turn rough image intent into a validated production spec and send it to the image generator automatically when the host exposes one. The host context or manifest may help discovery, but this file remains the canonical workflow.
 
 ## Non-negotiable behavior
 
@@ -33,7 +33,11 @@ Determine:
 
 If the user supplied a target image for an edit, verify that the runtime actually has access to that image before dispatching.
 
-### 2. Build the canonical JSON
+### 2. Develop internal proposals, then build the canonical JSON
+
+Read `references/multi-agent.md`. When the host exposes real delegation, commission three independent specialist briefs (composition, visual treatment, and fidelity), wait for their outputs, and synthesize one coherent direction. Multiple internal proposals are the default; they do not authorize multiple image-generation calls. Record real delegation results and selection decisions in a separate work record, never in the canonical image JSON.
+
+If delegation is unavailable or fails, follow the reference's explicit degraded workflow. Never claim that inline role passes are independent agents.
 
 Read `references/spec-schema.md` and create a top-level JSON object that follows it. Do not wrap the object inside `prompt`, `superprompt`, or `request`.
 
@@ -71,20 +75,13 @@ Required result: `VALID` and score **>= 90**.
 If validation fails:
 1. fix only the reported gaps or contradictions;
 2. validate again;
-3. allow at most two repair passes before falling back to a concise best-effort spec.
+3. allow at most two repair passes; if validation still fails, stop before dispatch and report the unresolved errors. Do not call an invalid spec validated.
 
 Validation is structural, not artistic. For complex/high-polish work, also perform a semantic check against the original request: every hard constraint must be represented once and no material new requirement may have been introduced.
 
-### 6. Optional verifier agent
+### 6. Review the selected specification
 
-If the runtime exposes real subagents and the request is complex (multi-subject, exact text/layout, identity preservation, reference-heavy, or a high-value final asset), use **one** verifier subagent before dispatch. Give it only:
-- the original user request,
-- the canonical JSON,
-- the reference roles.
-
-Ask it to return a concise `PASS` or a minimal patch list. Do not ask for hidden reasoning. Apply only patches that improve fidelity.
-
-Skip this step when subagents are unavailable or the request is simple.
+Use a fresh verifier agent when delegation is available, following `references/multi-agent.md`. Give it the original request, accessible references and roles, final JSON, and hard-constraint checklist. Require a concise PASS or concrete blocking defects. Resolve defects and revalidate any changed JSON before dispatch. A numeric structural score cannot override a semantic failure. With no delegation, perform and label an inline review.
 
 ### 7. Dispatch automatically
 
@@ -92,6 +89,7 @@ Use this order:
 
 **A. Host-native image generation tool — preferred**
 - Inspect the runtime's available tools; do not invent a tool name.
+- An image-generation tool exposed through the host's MCP integration counts as a host-native capability. Use it directly when available; do not invent or start an MCP server on the user's behalf.
 - If the tool accepts structured JSON, pass the validated canonical object.
 - If it accepts only prompt text, render the JSON with:
 
@@ -123,6 +121,8 @@ If the runtime can inspect the generated image, compare only observable results 
 - colors/materials
 - requested preserved elements
 - obvious anatomy/artifact failures
+
+Read `references/multi-agent.md` for result evaluation and evidence recording. Pass the actual result to a visual reviewer only if the host can expose the image to that agent. Record unavailable inspection as unverified; do not infer visual success from a successful tool response.
 
 If host-native generation supports a non-billable edit/retry path and one clear defect blocks success, make **one** targeted correction. For external paid APIs/webhooks, never auto-retry unless `SHOTPILOT_AUTO_RETRY=1` is explicitly configured.
 
@@ -157,5 +157,6 @@ User asks for "prompt only":
 - Perspective / camera storytelling → `references/perspectives.md`
 - Model/tool selection principles → `references/routing.md`
 - Quality criteria → `references/quality-rubric.md`
+- Specialist briefs, synthesis, review, and degraded operation → `references/multi-agent.md`
 
 Do not load all references unless the task genuinely needs them.

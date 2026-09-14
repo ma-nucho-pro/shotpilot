@@ -1,5 +1,7 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
+import {spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
 
 const file = process.argv[2];
 if (!file) {
@@ -10,6 +12,15 @@ const url = process.env.SHOTPILOT_WEBHOOK_URL;
 if (!url) {
   console.error('ShotPilot webhook is not configured. Set SHOTPILOT_WEBHOOK_URL.');
   process.exit(2);
+}
+const validation = spawnSync(process.execPath, [
+  fileURLToPath(new URL('./validate-spec.mjs', import.meta.url)), file
+], {encoding: 'utf8'});
+if (validation.error || validation.status !== 0) {
+  if (validation.stdout) process.stderr.write(validation.stdout);
+  if (validation.stderr) process.stderr.write(validation.stderr);
+  if (validation.error) console.error(`Validation failed: ${validation.error.message}`);
+  process.exit(1);
 }
 const spec = JSON.parse(fs.readFileSync(file, 'utf8'));
 const headers = {'content-type':'application/json'};

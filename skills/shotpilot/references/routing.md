@@ -2,7 +2,7 @@
 
 Prefer capabilities over hardcoded model names; model catalogs change.
 
-1. **Host-native generator first.** It usually has the best access to attached references and the least setup friction.
+1. **Host-native generator first.** This includes an image-generation tool exposed by the harness's MCP integration. It usually has the best access to attached references and the least setup friction; do not invent or start an MCP server if none is exposed.
 2. **Reference/identity edits:** choose a generator/tool path that explicitly supports image references or editing.
 3. **Exact text/posters/UI:** prefer a generator with strong typography/layout control.
 4. **People:** prefer strong anatomy, identity consistency, and reference fidelity.

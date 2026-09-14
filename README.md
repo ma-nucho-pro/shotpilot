@@ -56,11 +56,19 @@ ShotPilot is not simply <code>short prompt → longer prompt</code>. Its skill d
 
 1. Understand the user’s visual intent and hard constraints.
 2. Classify reference images by role.
-3. Build one canonical JSON specification.
+3. Commission independent composition, visual-treatment, and fidelity briefs through real host subagents, then compare and synthesize them into one canonical JSON specification.
 4. Add medium-appropriate camera, lighting, composition, and realism detail only when it helps.
 5. Run deterministic validation and require a score of at least 90/100 before dispatch.
 6. Route the validated contract to a host-native image tool or a configured JSON webhook.
 7. If no generator is available, return the validated spec and rendered prompt instead of claiming that an image was created.
+
+### Multi-agent direction
+
+When the harness exposes delegation, ShotPilot requests three specialist briefs, compares internal alternatives, and gives the selected specification to a fresh verifier before generation. The director resolves conflicting suggestions and preserves the user's fixed constraints. Multiple internal proposals still lead to one final image by default.
+
+The host must supply real subagent tools. With missing or failed delegation, the skill reports `single-agent` or `partial` execution and performs the missing passes inline; it never presents those passes as independent agents. Coordination evidence stays in a separate work record, preserving the canonical v1 image contract. See [the full protocol](skills/shotpilot/references/multi-agent.md).
+
+Structural validation and a semantic preflight are required before dispatch. The webhook command also enforces validation before any network request. Generated images are inspected when the host exposes them; inaccessible visual results remain unverified. Better image quality is an objective, not a measured guarantee: a controlled visual comparison is still needed.
 
 ### Reference images are not interchangeable
 
@@ -114,6 +122,7 @@ The distributable Agent Skill is the directory:
 ~~~text
 skills/shotpilot/
 ├── SKILL.md
+├── agents/
 ├── references/
 └── scripts/
 ~~~
@@ -126,7 +135,19 @@ Register or copy that directory into the skill location supported by your agent.
 
 Keep <code>references/</code> and <code>scripts/</code> beside <code>SKILL.md</code>; the skill loads them progressively when needed.
 
-This repository does not ship <code>scripts/install.mjs</code>, a <code>.skill</code> archive, <code>GEMINI.md</code>, <code>gemini-extension.json</code>, or <code>agents/openai.yaml</code>. There is therefore no bundled one-command installer, provider credential setup, or harness-specific extension metadata. The source folder above is the portable installation unit.
+This repository ships a dependency-free installer at <code>scripts/install.mjs</code>, Codex UI metadata at <code>skills/shotpilot/agents/openai.yaml</code>, and a Gemini CLI context/extension pair at <code>GEMINI.md</code> and <code>gemini-extension.json</code>. These files only distribute and expose the same portable skill; they do not add provider credentials, replace native host tools, or bundle an image model.
+
+For a local user-scoped install, choose one target:
+
+~~~bash
+node scripts/install.mjs claude
+node scripts/install.mjs codex
+node scripts/install.mjs cursor
+node scripts/install.mjs gemini
+node scripts/install.mjs agents
+~~~
+
+To install the skill in every supported user location, run <code>node scripts/install.mjs all</code>. Existing ShotPilot destinations are protected; use <code>--force</code> only when you intentionally want to update an existing ShotPilot copy. Use <code>--dry-run</code> to inspect destinations without writing files.
 
 ### Install with Claude Code
 
@@ -134,6 +155,12 @@ Use Claude Code’s Agent Skills discovery mechanism and register <code>skills/s
 
 ~~~text
 .claude/skills/shotpilot/SKILL.md
+~~~
+
+From the cloned repository, the installer can create the user-scoped copy:
+
+~~~bash
+node scripts/install.mjs claude
 ~~~
 
 Copy-ready instruction:
@@ -149,7 +176,13 @@ Code has an image-generation tool available.
 
 ### Install with Codex
 
-Codex can discover a skill directory containing <code>SKILL.md</code>. Use the [Codex skills documentation](https://developers.openai.com/codex/skills/) and the Codex skill installer when available, or place <code>skills/shotpilot/</code> in a Codex skill root. User-scoped installs commonly use <code>~/.agents/skills/shotpilot/</code>; older Codex releases may also use <code>~/.codex/skills/shotpilot/</code>. This repository intentionally has no Codex-specific <code>agents/openai.yaml</code>; the portable skill instructions remain in <code>SKILL.md</code>.
+Codex can discover a skill directory containing <code>SKILL.md</code>. Use the [Codex skills documentation](https://developers.openai.com/codex/skills/) and the Codex skill installer when available, or use the bundled installer:
+
+~~~bash
+node scripts/install.mjs codex
+~~~
+
+The installer uses <code>$CODEX_HOME/skills/shotpilot/</code> when <code>CODEX_HOME</code> is set, otherwise <code>~/.codex/skills/shotpilot/</code>. If your Codex setup uses the interoperable <code>~/.agents/skills/</code> root, use <code>node scripts/install.mjs agents</code> instead. The optional UI metadata lives in <code>skills/shotpilot/agents/openai.yaml</code>; it does not add a provider or a second workflow.
 
 Copy-ready instruction:
 
@@ -170,6 +203,12 @@ Cursor discovers Agent Skills from project or user skill directories. See the [C
 .cursor/skills/shotpilot/SKILL.md
 ~~~
 
+For a user-scoped install from the cloned repository:
+
+~~~bash
+node scripts/install.mjs cursor
+~~~
+
 For a user-scoped installation, use <code>~/.cursor/skills/shotpilot/</code> or <code>~/.agents/skills/shotpilot/</code>. After copying the folder, reload or list skills in Cursor and invoke ShotPilot when an image task matches its description.
 
 Copy-ready instruction:
@@ -184,10 +223,22 @@ image-generation capability for the final dispatch step.
 
 ### Install with Gemini CLI
 
-Gemini CLI supports Agent Skills and can install a skill from a repository URL. See the [Gemini CLI Agent Skills documentation](https://geminicli.com/docs/cli/using-agent-skills/) for current commands:
+Gemini CLI supports Agent Skills and extensions. The direct skill install uses the current Agent Skills command:
 
 ~~~bash
-gemini skills install https://github.com/ma-nucho-pro/shotpilot/tree/main/skills/shotpilot
+gemini skills install https://github.com/ma-nucho-pro/shotpilot.git --path skills/shotpilot
+~~~
+
+The repository is also a Gemini CLI extension because it includes <code>gemini-extension.json</code>, <code>GEMINI.md</code>, and the bundled <code>skills/shotpilot/</code> directory:
+
+~~~bash
+gemini extensions install https://github.com/ma-nucho-pro/shotpilot
+~~~
+
+For a user-scoped skill copy without installing the extension:
+
+~~~bash
+node scripts/install.mjs gemini
 ~~~
 
 For a workspace-local installation, the discovered layout can be:
@@ -203,10 +254,11 @@ Verify discovery in an interactive session with <code>/skills list</code>. Reloa
 Copy-ready instruction:
 
 ~~~text
-Install ShotPilot from
-https://github.com/ma-nucho-pro/shotpilot/tree/main/skills/shotpilot.
-Preserve the complete skill directory, inspect its scripts before activation,
-run npm test in the repository root, and confirm the result with /skills list.
+Install the ShotPilot Agent Skill from
+https://github.com/ma-nucho-pro/shotpilot.git using Gemini CLI's skill installer
+with the repository subdirectory skills/shotpilot, or install the repository as
+the ShotPilot Gemini extension. Preserve the complete skill directory, inspect
+its scripts before activation, and confirm the result with /skills list.
 Do not add credentials or claim that an image was generated unless Gemini CLI
 has an image-generation tool or a configured ShotPilot webhook.
 ~~~
@@ -221,6 +273,12 @@ Use the same folder as the package. A compatible harness should discover the YAM
 <skills-root>/shotpilot/scripts/
 ~~~
 
+The generic user-scoped destination can be created with:
+
+~~~bash
+node scripts/install.mjs agents
+~~~
+
 If the harness uses a different discovery directory, follow that harness’s documented location. Do not move <code>SKILL.md</code> away from the skill root.
 
 ## Harness support
@@ -229,10 +287,10 @@ ShotPilot is distributed as a portable Agent Skill. “Supported” here means t
 
 | Harness | Repository integration | What to verify |
 | --- | --- | --- |
-| Claude Code | Portable <code>skills/shotpilot/SKILL.md</code>; no Claude-specific manifest is shipped. | The skill is discovered and the host exposes a generator or webhook. |
-| Codex | Portable <code>SKILL.md</code>; no <code>agents/openai.yaml</code> is shipped. | The skill is in a discovered Codex skill root and native image tools are available if automatic generation is expected. |
+| Claude Code | Portable <code>skills/shotpilot/SKILL.md</code>; the installer can target <code>~/.claude/skills/shotpilot/</code>. | The skill is discovered and the host exposes a generator or webhook. |
+| Codex | Portable <code>SKILL.md</code> plus optional <code>agents/openai.yaml</code> UI metadata. | The skill is in a discovered Codex skill root and native image tools are available if automatic generation is expected. |
 | Cursor | Portable <code>SKILL.md</code>; project install can use <code>.cursor/skills/shotpilot/</code>. | Reload/list skills after installation. |
-| Gemini CLI | Portable <code>SKILL.md</code>; workspace install can use <code>.gemini/skills/shotpilot/</code>. | <code>/skills list</code> shows <code>shotpilot</code> before activation. |
+| Gemini CLI | Direct Agent Skill plus optional extension with <code>gemini-extension.json</code>, <code>GEMINI.md</code>, and bundled <code>skills/</code>. | <code>/skills list</code> shows <code>shotpilot</code> before activation; <code>/extensions list</code> shows the extension when installed that way. |
 | Other Agent Skills harnesses | Standard folder with <code>SKILL.md</code>, <code>references/</code>, and <code>scripts/</code>. | Confirm the harness’s discovery path and tool permissions. |
 
 ## Image backends
@@ -244,7 +302,7 @@ ShotPilot and an image model are two different layers:
 
 The skill’s routing policy is capability-based:
 
-1. **Host-native image-generation tool** — preferred when the current agent exposes one, especially for reference-image edits.
+1. **Host-native image-generation tool** — preferred when the current agent exposes one, especially for reference-image edits. An image tool exposed through the host's MCP integration belongs in this tier.
 2. **Configured JSON webhook** — the executable <code>send</code> command posts the unchanged canonical JSON to <code>SHOTPILOT_WEBHOOK_URL</code>. The endpoint can be a custom service, an n8n or Make workflow, or an MCP gateway you operate.
 3. **No generator** — validation and prompt rendering still work, but ShotPilot does not report a generated image.
 
@@ -297,10 +355,12 @@ User request
 ShotPilot skill
     ├─ understand intent and hard constraints
     ├─ classify reference roles
-    ├─ build canonical JSON
+    ├─ commission three independent specialist briefs
+    ├─ compare alternatives and build canonical JSON
     ├─ add useful camera / lighting / composition detail
     ├─ validate ≥ 90/100
-    ├─ route to an available capability
+    ├─ independent preflight (or explicit degraded inline review)
+    ├─ route to an available capability and inspect result
     └─ return the generated result, or an honest fallback
          ↓
       Image backend
@@ -355,6 +415,7 @@ Validation is structural, not an artistic score. The included validator returns 
 | <code>shotpilot validate spec.json</code> | Parse and score a canonical JSON spec. |
 | <code>shotpilot render spec.json</code> | Flatten the canonical spec into a provider-friendly text prompt. |
 | <code>shotpilot send spec.json</code> | POST the canonical JSON to <code>SHOTPILOT_WEBHOOK_URL</code>. |
+| <code>node scripts/install.mjs &lt;target&gt;</code> | Copy the portable skill to a user-scoped harness location. Targets are <code>claude</code>, <code>codex</code>, <code>cursor</code>, <code>gemini</code>, <code>agents</code>, and <code>all</code>. |
 | <code>npm test</code> | Run the deterministic validator/renderer checks. |
 | <code>npm run check</code> | Run the same check script through the <code>check</code> npm alias. |
 | <code>node bin/shotpilot.mjs</code> | Print CLI usage. |
@@ -367,14 +428,18 @@ The CLI does not contain a second LLM. The agent is responsible for compiling th
 shotpilot/
 ├── bin/shotpilot.mjs                       CLI entry point
 ├── examples/candid-cafe.json               complete example spec
+├── scripts/install.mjs                      safe multi-harness skill installer
 ├── skills/shotpilot/
 │   ├── SKILL.md                            core agent instructions
+│   ├── agents/openai.yaml                   optional Codex UI metadata
 │   ├── references/                         schema and guidance
 │   └── scripts/
 │       ├── validate-spec.mjs               deterministic 0–100 validator
 │       ├── render-prompt.mjs               JSON → text prompt renderer
 │       └── dispatch-webhook.mjs            JSON → webhook transport
 ├── tests/run.mjs                           local checks
+├── GEMINI.md                               Gemini extension context
+├── gemini-extension.json                   Gemini CLI extension manifest
 ├── .github/workflows/ci.yml                Node 18, 20, and 22 on three OSes
 ├── package.json                            CLI metadata and npm scripts
 └── LICENSE                                 MIT license
@@ -402,7 +467,7 @@ No provider adapter is included. Those backends can be connected through a host-
 
 ### Is MCP built in?
 
-No MCP server is bundled. An MCP image tool can be exposed by the host, or an MCP gateway can sit behind the configured webhook. The repository itself only implements the JSON webhook transport.
+No MCP server is bundled. An MCP image tool can be exposed by the host and is treated as a native image capability, or an MCP gateway can sit behind the configured webhook. The repository itself only implements the JSON webhook transport.
 
 ### What does the 90/100 threshold mean?
 
