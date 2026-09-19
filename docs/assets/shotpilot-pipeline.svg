@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Pipeline de ShotPilot</title>
+  <desc id="desc">ShotPilot clasifica una petición visual, reúne briefs especializados, crea un contrato JSON, lo valida y lo envía a un generador disponible o devuelve una especificación honesta.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#150f2e"/>
+      <stop offset="1" stop-color="#302052"/>
+    </linearGradient>
+    <linearGradient id="core" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#6d45b8"/>
+      <stop offset="1" stop-color="#472f8c"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000000" flood-opacity=".36"/>
+    </filter>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#e7c6ff"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#8fe3b1"/>
+    </marker>
+    <style>
+      .ui { font-family: Inter, Segoe UI, Arial, sans-serif; }
+      .title { font-size: 42px; font-weight: 750; fill: #fffaff; }
+      .subtitle { font-size: 20px; fill: #d9c9eb; }
+      .label { font-size: 22px; font-weight: 700; fill: #fffaff; }
+      .body { font-size: 17px; fill: #dbcfea; }
+      .small { font-size: 15px; fill: #c5b4dc; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 16px; fill: #efdcff; }
+    </style>
+  </defs>
+  <rect width="1600" height="900" rx="36" fill="url(#bg)"/>
+  <circle cx="1470" cy="110" r="240" fill="#c46bce" opacity=".14"/>
+  <circle cx="80" cy="810" r="260" fill="#6756d6" opacity=".12"/>
+
+  <g class="ui">
+    <text x="86" y="92" class="title">ShotPilot · visual-intent compiler</text>
+    <text x="86" y="130" class="subtitle">La intención entra como lenguaje natural; el generador recibe un contrato validado</text>
+
+    <g filter="url(#shadow)">
+      <rect x="86" y="190" width="250" height="96" rx="22" fill="#5f2f72" stroke="#e7b1f1" stroke-width="2"/>
+    </g>
+    <text x="211" y="231" class="label" text-anchor="middle">Petición visual</text>
+    <text x="211" y="261" class="body" text-anchor="middle">texto + referencias</text>
+    <path d="M336 238 H430" fill="none" stroke="#e7c6ff" stroke-width="4" marker-end="url(#arrow)"/>
+
+    <g filter="url(#shadow)">
+      <rect x="430" y="164" width="310" height="148" rx="24" fill="#251b48" stroke="#8f79d8" stroke-width="2"/>
+    </g>
+    <text x="585" y="205" class="label" text-anchor="middle">Clasificación</text>
+    <text x="585" y="238" class="body" text-anchor="middle">modo · asset · restricciones</text>
+    <text x="585" y="270" class="mono" text-anchor="middle">identity · style · composition</text>
+    <path d="M740 238 H842" fill="none" stroke="#e7c6ff" stroke-width="4" marker-end="url(#arrow)"/>
+
+    <g filter="url(#shadow)">
+      <rect x="842" y="150" width="610" height="182" rx="26" fill="url(#core)" stroke="#e7c6ff" stroke-width="2"/>
+    </g>
+    <text x="1147" y="198" class="label" text-anchor="middle">Tres briefs especialistas</text>
+    <g>
+      <rect x="875" y="228" width="170" height="54" rx="16" fill="#8259c7"/>
+      <rect x="1062" y="228" width="170" height="54" rx="16" fill="#8259c7"/>
+      <rect x="1249" y="228" width="170" height="54" rx="16" fill="#8259c7"/>
+      <text x="960" y="262" class="small" text-anchor="middle">composición</text>
+      <text x="1147" y="262" class="small" text-anchor="middle">tratamiento visual</text>
+      <text x="1334" y="262" class="small" text-anchor="middle">fidelidad</text>
+    </g>
+
+    <path d="M1147 332 V382" fill="none" stroke="#e7c6ff" stroke-width="4" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)">
+      <rect x="420" y="382" width="1090" height="134" rx="26" fill="#211942" stroke="#bfa5ed" stroke-width="2"/>
+    </g>
+    <text x="965" y="427" class="label" text-anchor="middle">Contrato visual canónico</text>
+    <text x="965" y="460" class="body" text-anchor="middle">JSON estructurado · must_preserve · negative_constraints · prompt renderizable</text>
+    <text x="965" y="488" class="mono" text-anchor="middle">una especificación final, no tres generaciones</text>
+
+    <path d="M965 516 V568" fill="none" stroke="#8fe3b1" stroke-width="5" marker-end="url(#arrowGreen)"/>
+    <g filter="url(#shadow)">
+      <rect x="500" y="568" width="940" height="100" rx="24" fill="#18392f" stroke="#8fe3b1" stroke-width="3"/>
+    </g>
+    <text x="970" y="609" class="label" text-anchor="middle">Validación determinista</text>
+    <text x="970" y="640" class="body" text-anchor="middle">VALID · score &gt;= 90/100 · revisión semántica antes del dispatch</text>
+
+    <path d="M620 668 H440 V748" fill="none" stroke="#e7c6ff" stroke-width="4" marker-end="url(#arrow)"/>
+    <path d="M1320 668 H1160 V748" fill="none" stroke="#e7c6ff" stroke-width="4" marker-end="url(#arrow)"/>
+    <g filter="url(#shadow)">
+      <rect x="90" y="748" width="700" height="96" rx="22" fill="#251b48" stroke="#8f79d8" stroke-width="2"/>
+      <rect x="810" y="748" width="700" height="96" rx="22" fill="#251b48" stroke="#8f79d8" stroke-width="2"/>
+    </g>
+    <text x="440" y="788" class="label" text-anchor="middle">Host-native image tool</text>
+    <text x="440" y="818" class="body" text-anchor="middle">genera cuando el host expone esa capacidad</text>
+    <text x="1160" y="788" class="label" text-anchor="middle">Webhook JSON configurado</text>
+    <text x="1160" y="818" class="body" text-anchor="middle">n8n · Make · MCP gateway · servicio propio</text>
+    <text x="800" y="875" class="small" text-anchor="middle">Si no hay generador disponible, ShotPilot devuelve la especificación y el prompt; no afirma que creó una imagen.</text>
+  </g>
+</svg>

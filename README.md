@@ -32,6 +32,10 @@
 rough request → ShotPilot → validated visual contract → available generator → image
 ~~~
 
+<p align="center">
+  <img src="docs/assets/shotpilot-pipeline.svg" alt="Diagrama del pipeline de ShotPilot: clasificación, briefs de composición, tratamiento y fidelidad, contrato visual validado y dispatch a un generador" width="100%" />
+</p>
+
 ShotPilot is the orchestration layer. The host agent or a configured webhook must provide the capability that renders the pixels.
 
 ## Why ShotPilot
