@@ -1,6 +1,8 @@
+<!-- manucho-readme-banner:start -->
 <p align="center">
-  <img src="https://i.ibb.co/vC1FphVh/Chat-GPT-Image-11-sept-2026-06-30-35-p-m.png" alt="ShotPilot logo" width="240" />
+  <img src="assets/readme/banner.svg" alt="SHOTPILOT project overview" width="100%">
 </p>
+<!-- manucho-readme-banner:end -->
 
 <h1 align="center">ShotPilot</h1>
 
